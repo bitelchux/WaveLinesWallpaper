@@ -4,6 +4,7 @@ import de.markusfisch.android.wallpaper.service.WallpaperService;
 
 import de.markusfisch.android.wavelines.activity.CompositorActivity;
 import de.markusfisch.android.wavelines.activity.SettingsActivity;
+import de.markusfisch.android.wavelines.content.Theme;
 import de.markusfisch.android.wavelines.graphics.WaveLinesRenderer;
 import de.markusfisch.android.wavelines.R;
 
@@ -55,24 +56,24 @@ public class WaveLinesWallpaperService extends WallpaperService
 			delay = Integer.parseInt(
 				preferences.getString( "delay", "100" ) );
 
-			renderer.uniform =
-				preferences.getBoolean( "uniform", false );
-			renderer.coupled =
+			Theme theme = new Theme();
+
+			theme.coupled =
 				preferences.getBoolean( "coupled", true );
-			renderer.uniform =
+			theme.uniform =
 				preferences.getBoolean( "uniform", false );
-			renderer.lines = Integer.parseInt(
+			theme.lines = Integer.parseInt(
 				preferences.getString( "lines", "24" ) );
-			renderer.waves = Integer.parseInt(
+			theme.waves = Integer.parseInt(
 				preferences.getString( "waves", "3" ) );
-			renderer.relativeAmplitude = Float.parseFloat(
+			theme.relativeAmplitude = Float.parseFloat(
 				preferences.getString( "amplitude", ".02" ) );
-			renderer.colors =
+			theme.colors =
 				WaveLinesWallpaperService.getThemeColors(
 					getApplicationContext(),
 					preferences );
 
-			renderer.reset();
+			renderer.reset( theme );
 		}
 
 		@Override

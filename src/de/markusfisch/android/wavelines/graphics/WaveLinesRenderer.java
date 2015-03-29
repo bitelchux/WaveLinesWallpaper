@@ -1,5 +1,7 @@
 package de.markusfisch.android.wavelines.graphics;
 
+import de.markusfisch.android.wavelines.content.Theme;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -7,25 +9,20 @@ import android.graphics.Path;
 
 public class WaveLinesRenderer
 {
-	public boolean coupled = true;
-	public boolean uniform = false;
-	public int colors[] = null;
-	public int lines = 0;
-	public int waves = 3;
-	public float relativeAmplitude = .02f;
-
 	private final Paint paint = new Paint( Paint.ANTI_ALIAS_FLAG );
 	private final Path path = new Path();
 	private float thicknessMax;
 	private float thicknessMin;
 	private float amplitudeMax;
 	private float amplitudeMin;
+	private Theme theme = new Theme();
 	private WaveLine waveLines[] = null;
 	private float width = 0;
 	private float height = 0;
 
-	public void reset()
+	public void reset( Theme theme )
 	{
+		this.theme = theme;
 		waveLines = null;
 	}
 
@@ -44,7 +41,7 @@ public class WaveLinesRenderer
 			final double elapsed = e/1000.0;
 			float r = 0;
 
-			for( int n = lines;
+			for( int n = theme.lines;
 				n-- > 0; )
 			{
 				waveLines[n].flow( elapsed );
@@ -108,34 +105,34 @@ public class WaveLinesRenderer
 
 	private void create()
 	{
-		if( lines < 1 ||
+		if( theme.lines < 1 ||
 			width < 1 ||
 			height < 1 ||
-			colors == null ||
-			colors.length < 2 )
+			theme.colors == null ||
+			theme.colors.length < 2 )
 			return;
 
 		// calculates sizes relative to screen size
 		final float maxSize = Math.max( width, height );
 
-		thicknessMax = (float)Math.ceil( (float)(maxSize/lines)*2f );
+		thicknessMax = (float)Math.ceil( (float)(maxSize/theme.lines)*2f );
 		thicknessMin = .01f*maxSize;
 
 		if( thicknessMin < 2 )
 			thicknessMin = 2;
 
-		amplitudeMax = relativeAmplitude*maxSize;
+		amplitudeMax = theme.relativeAmplitude*maxSize;
 		amplitudeMin = -amplitudeMax;
 
-		waveLines = new WaveLine[lines];
+		waveLines = new WaveLine[theme.lines];
 
 		int hl = 0;
 		float growths[] = null;
 		int indices[] = null;
 
-		if( !uniform )
+		if( !theme.uniform )
 		{
-			hl = lines/2;
+			hl = theme.lines/2;
 			growths = new float[hl];
 			indices = new int[hl];
 
@@ -171,26 +168,26 @@ public class WaveLinesRenderer
 
 		// create wave lines
 		{
-			int c = (int)(Math.random()*(colors.length-1));
-			final float av = (float)maxSize/lines;
+			int c = (int)(Math.random()*(theme.colors.length-1));
+			final float av = (float)maxSize/theme.lines;
 
-			final int l = (int)Math.ceil( (float)maxSize/waves );
+			final int l = (int)Math.ceil( (float)maxSize/theme.waves );
 			final float v = l*.1f;
 			final float hv = v/2f;
 			WaveLine last = null;
 
-			for( int n = lines;
+			for( int n = theme.lines;
 				n-- > 0;
-				c = (++c)%colors.length )
+				c = (++c)%theme.colors.length )
 				last = waveLines[n] = new WaveLine(
-					coupled ? last : null,
+					theme.coupled ? last : null,
 					l,
 					v,
 					hv,
 					av,
-					!uniform && n < hl ? growths[n] : 0,
-					colors[c],
-					!uniform && n >= hl ? indices[n-hl] : -1 );
+					!theme.uniform && n < hl ? growths[n] : 0,
+					theme.colors[c],
+					!theme.uniform && n >= hl ? indices[n-hl] : -1 );
 		}
 	}
 
@@ -222,7 +219,7 @@ public class WaveLinesRenderer
 				thickness = t;
 				amplitude = amplitudeMin+(float)Math.ceil(
 					Math.random()*(amplitudeMax-amplitudeMin) );
-				power = coupled ?
+				power = theme.coupled ?
 					.1f+amplitudeMax*.37f :
 					.1f+(float)Math.random()*(amplitudeMax*.75f);
 				shift = -(float)Math.random()*(length*2);
