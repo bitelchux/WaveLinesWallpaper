@@ -79,7 +79,7 @@ public abstract class WallpaperService
 			nextFrame();
 		}
 
-		protected abstract void drawFrame( final Canvas c, final long e );
+		protected abstract void drawFrame( Canvas canvas, long e );
 
 		protected void nextFrame()
 		{
@@ -91,21 +91,21 @@ public abstract class WallpaperService
 			handler.postDelayed( runnable, delay );
 
 			final SurfaceHolder h = getSurfaceHolder();
-			Canvas c = null;
+			Canvas canvas = null;
 
 			try
 			{
-				if( (c = h.lockCanvas()) != null )
+				if( (canvas = h.lockCanvas()) != null )
 				{
 					final long now = SystemClock.elapsedRealtime();
-					drawFrame( c, now-time );
+					drawFrame( canvas, now-time );
 					time = now;
 				}
 			}
 			finally
 			{
-				if( c != null )
-					h.unlockCanvasAndPost( c );
+				if( canvas != null )
+					h.unlockCanvasAndPost( canvas );
 			}
 		}
 
