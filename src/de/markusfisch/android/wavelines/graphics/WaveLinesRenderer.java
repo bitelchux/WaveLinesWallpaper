@@ -1,22 +1,11 @@
-/*
- *   O         ,-
- *  ° o    . -´  '     ,-
- *   °  .´        ` . ´,´
- *     ( °   ))     . (
- *      `-;_    . -´ `.`.
- *          `._'       ´
- *
- * 2012 Markus Fisch <mf@markusfisch.de>
- * Public Domain
- */
-package de.markusfisch.android.wavelines;
+package de.markusfisch.android.wavelines.graphics;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 
-public class WaveLines
+public class WaveLinesRenderer
 {
 	public boolean coupled = true;
 	public boolean uniform = false;
@@ -40,13 +29,13 @@ public class WaveLines
 		waveLines = null;
 	}
 
-	public void setup( final int w, final int h )
+	public void setup( int w, int h )
 	{
 		width = w;
 		height = h;
 	}
 
-	public void draw( final Canvas c, final long e )
+	public void draw( Canvas canvas, long e )
 	{
 		if( waveLines == null )
 			create();
@@ -112,7 +101,7 @@ public class WaveLines
 				}
 
 				paint.setColor( waveLines[n].color );
-				c.drawPath( path, paint );
+				canvas.drawPath( path, paint );
 			}
 		}
 	}

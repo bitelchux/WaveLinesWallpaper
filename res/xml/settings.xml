@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:title="@string/settings"
 	android:key="settings">
 	<PreferenceCategory
@@ -18,7 +18,7 @@
 			<intent
 				android:action="android.intent.action.VIEW"
 				android:targetPackage="de.markusfisch.android.wavelines"
-				android:targetClass="de.markusfisch.android.wavelines.Compositor"/>
+				android:targetClass="de.markusfisch.android.wavelines.activity.CompositorActivity"/>
 		</Preference>
 	</PreferenceCategory>
 	<PreferenceCategory

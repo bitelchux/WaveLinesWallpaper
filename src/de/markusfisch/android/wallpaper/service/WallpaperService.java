@@ -1,23 +1,12 @@
-/*
- *   O         ,-
- *  ° o    . -´  '     ,-
- *   °  .´        ` . ´,´
- *     ( °   ))     . (
- *      `-;_    . -´ `.`.
- *          `._'       ´
- *
- * 2012 Markus Fisch <mf@markusfisch.de>
- * Public Domain
- */
-package de.markusfisch.android.wallpaper;
+package de.markusfisch.android.wallpaper.service;
 
 import android.os.SystemClock;
 import android.os.Handler;
-import android.service.wallpaper.WallpaperService;
 import android.view.SurfaceHolder;
 import android.graphics.Canvas;
 
-public abstract class Wallpaper extends WallpaperService
+public abstract class WallpaperService
+	extends android.service.wallpaper.WallpaperService
 {
 	protected abstract class WallpaperEngine extends Engine
 	{
