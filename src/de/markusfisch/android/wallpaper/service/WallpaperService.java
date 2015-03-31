@@ -76,7 +76,6 @@ public abstract class WallpaperService
 			int xPixelOffset,
 			int yPixelOffset )
 		{
-			nextFrame();
 		}
 
 		protected abstract void drawFrame( Canvas canvas, long e );
