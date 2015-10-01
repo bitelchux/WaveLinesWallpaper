@@ -1,5 +1,4 @@
 *.swp
-build.xml
-bin
-gen
-local.properties
+.gradle
+build
+infer-out

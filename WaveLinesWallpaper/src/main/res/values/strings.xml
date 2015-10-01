@@ -1,0 +1,7 @@
+<resources>
+	<string name="title">Wave Lines</string>
+	<string name="description">Moving wave lines</string>
+	<string name="preferences">Preferences</string>
+	<string name="delay">Frame rate</string>
+	<string name="delay_summary">Use a lower value to save battery and resources</string>
+</resources>
