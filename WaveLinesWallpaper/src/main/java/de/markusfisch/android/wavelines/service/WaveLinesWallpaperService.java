@@ -1,6 +1,6 @@
 package de.markusfisch.android.wavelines.service;
 
-import de.markusfisch.android.wavelines.content.Theme;
+import de.markusfisch.android.wavelines.database.Theme;
 import de.markusfisch.android.wavelines.graphics.WaveLinesRenderer;
 import de.markusfisch.android.wavelines.R;
 
@@ -65,7 +65,7 @@ public class WaveLinesWallpaperService extends CanvasWallpaperService
 				new Theme() );*/
 
 			delay = 100;
-			renderer.reset( new Theme() );
+			renderer.init( new Theme() );
 		}
 
 		@Override

@@ -1,6 +1,6 @@
 package de.markusfisch.android.wavelines.graphics;
 
-import de.markusfisch.android.wavelines.content.Theme;
+import de.markusfisch.android.wavelines.database.Theme;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -14,12 +14,12 @@ public class WaveLinesRenderer
 	private float thicknessMin;
 	private float amplitudeMax;
 	private float amplitudeMin;
-	private Theme theme = new Theme();
+	private Theme theme;
 	private WaveLine waveLines[];
 	private float width = 0;
 	private float height = 0;
 
-	public void reset( Theme theme )
+	public void init( Theme theme )
 	{
 		this.theme = theme;
 		waveLines = null;

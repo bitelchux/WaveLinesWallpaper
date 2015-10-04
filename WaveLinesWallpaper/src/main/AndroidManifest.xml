@@ -1,5 +1,7 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	tools:ignore="UnusedAttribute"
 	package="de.markusfisch.android.wavelines"
 	android:versionCode="4"
 	android:versionName="1.3.0"
@@ -13,6 +15,9 @@
 		android:xlargeScreens="true"
 		android:anyDensity="true"/>
 	<application
+		android:name=".app.WaveLinesWallpaperApplication"
+		android:allowBackup="true"
+		android:fullBackupContent="true"
 		android:label="@string/title"
 		android:icon="@mipmap/ic_launcher">
 		<service
