@@ -5,4 +5,5 @@
 	<string name="preferences">Preferences</string>
 	<string name="delay">Frame rate</string>
 	<string name="delay_summary">Use a lower value to save battery and resources</string>
+	<string name="themes">Themes</string>
 </resources>

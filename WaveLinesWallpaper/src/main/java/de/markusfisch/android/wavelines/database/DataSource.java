@@ -1,11 +1,15 @@
 package de.markusfisch.android.wavelines.database;
 
+import de.markusfisch.android.wavelines.R;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.AsyncTask;
+import android.widget.Toast;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -23,14 +27,12 @@ public class DataSource
 	public static final String THEMES_COLORS = "colors";
 
 	private SQLiteDatabase db;
-	private OpenHelper helper;
-	private Context context;
 
 	public DataSource( Context context )
 	{
-		helper = new OpenHelper( context );
-
-		this.context = context;
+		openAsync(
+			new OpenHelper( context ),
+			context );
 	}
 
 	public boolean isOpen()
@@ -38,39 +40,11 @@ public class DataSource
 		return db != null;
 	}
 
-	public boolean open() throws SQLException
-	{
-		return (db = helper.getWritableDatabase()) != null;
-	}
-
-	public void close()
-	{
-		helper.close();
-		db = null;
-	}
-
-	public static boolean closeIfEmpty( Cursor cursor )
-	{
-		if( cursor != null &&
-			cursor.moveToFirst() )
-			return false;
-
-		if( cursor != null )
-			cursor.close();
-
-		return true;
-	}
-
 	public Cursor queryThemes()
 	{
 		return db.rawQuery(
 			"SELECT "+
 				THEMES_ID+","+
-				THEMES_COUPLED+","+
-				THEMES_UNIFORM+","+
-				THEMES_LINES+","+
-				THEMES_WAVES+","+
-				THEMES_AMPLITUDE+","+
 				THEMES_COLORS+
 				" FROM "+THEMES+
 				" ORDER BY "+THEMES_ID,
@@ -153,7 +127,7 @@ public class DataSource
 			null );
 	}
 
-	private Theme themeFromCursor( Cursor cursor )
+	public static int[] colorsFromCursor( Cursor cursor )
 	{
 		byte bytes[] = cursor.getBlob(
 			cursor.getColumnIndex( THEMES_COLORS ) );
@@ -169,6 +143,11 @@ public class DataSource
 		int colors[] = new int[ib.remaining()];
 		ib.get( colors );
 
+		return colors;
+	}
+
+	private Theme themeFromCursor( Cursor cursor )
+	{
 		return new Theme(
 			cursor.getInt(
 				cursor.getColumnIndex( THEMES_COUPLED ) ) > 0,
@@ -180,7 +159,7 @@ public class DataSource
 				cursor.getColumnIndex( THEMES_WAVES ) ),
 			cursor.getFloat(
 				cursor.getColumnIndex( THEMES_AMPLITUDE ) ),
-			colors );
+			colorsFromCursor( cursor ) );
 	}
 
 	private static long insertTheme(
@@ -244,6 +223,52 @@ public class DataSource
 				0xff00a0e0,
 				0xff0070b0,
 				0xff0090d0 } );
+
+		insertTheme(
+			db,
+			false,
+			false,
+			4,
+			2,
+			.04,
+			new int[] {
+				0xff00b06c,
+				0xff007ac6,
+				0xffe86f13,
+				0xffcf6310 } );
+	}
+
+	private void openAsync(
+		final OpenHelper helper,
+		final Context context )
+	{
+		new AsyncTask<Void, Void, Boolean>()
+		{
+			@Override
+			protected Boolean doInBackground( Void... nothings )
+			{
+				try
+				{
+					return (db = helper.getWritableDatabase()) != null;
+				}
+				catch( SQLException e )
+				{
+					return false;
+				}
+			}
+
+			@Override
+			protected void onPostExecute( Boolean success )
+			{
+				if( success )
+					return;
+
+				Toast.makeText(
+					context,
+					R.string.error_database,
+					Toast.LENGTH_LONG ).show();
+			}
+		}.execute();
 	}
 
 	private class OpenHelper extends SQLiteOpenHelper

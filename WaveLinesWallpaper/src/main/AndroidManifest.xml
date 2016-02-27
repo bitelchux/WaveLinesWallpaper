@@ -32,5 +32,9 @@
 				android:name="android.service.wallpaper"
 				android:resource="@xml/wallpaper"/>
 		</service>
+		<activity
+			android:name=".activity.ThemesActivity"
+			android:label="@string/themes"
+			android:exported="true"/>
 	</application>
 </manifest>

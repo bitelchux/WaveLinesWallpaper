@@ -1,4 +1,5 @@
 <wallpaper
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:thumbnail="@mipmap/ic_launcher"
-	android:description="@string/description"/>
+	android:description="@string/description"
+	android:settingsActivity="de.markusfisch.android.wavelines.activity.ThemesActivity"/>

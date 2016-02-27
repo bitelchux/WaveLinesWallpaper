@@ -1,13 +1,26 @@
 PACKAGE = de.markusfisch.android.wavelines
 APK = WaveLinesWallpaper/build/outputs/apk/WaveLinesWallpaper-debug.apk
 
-all: apk install
+all: debug install start
 
-apk:
-	./gradlew build
+debug:
+	./gradlew assembleDebug
+
+release:
+	@./gradlew assembleRelease \
+		-Pandroid.injected.signing.store.file=$(ANDROID_KEYFILE) \
+		-Pandroid.injected.signing.store.password=$(ANDROID_STORE_PASSWORD) \
+		-Pandroid.injected.signing.key.alias=$(ANDROID_KEY_ALIAS) \
+		-Pandroid.injected.signing.key.password=$(ANDROID_KEY_PASSWORD)
+
+lint:
+	./gradlew lintDebug
 
 install:
 	adb $(TARGET) install -rk $(APK)
+
+start:
+	adb $(TARGET) shell 'am start -n $(PACKAGE)/.activity.MainActivity'
 
 uninstall:
 	adb $(TARGET) uninstall $(PACKAGE)
