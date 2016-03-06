@@ -28,11 +28,37 @@ public class DataSource
 
 	private SQLiteDatabase db;
 
-	public DataSource( Context context )
+	public void openAsync( final Context context )
 	{
-		openAsync(
-			new OpenHelper( context ),
-			context );
+		final OpenHelper helper = new OpenHelper( context );
+
+		new AsyncTask<Void, Void, Boolean>()
+		{
+			@Override
+			protected Boolean doInBackground( Void... nothings )
+			{
+				try
+				{
+					return (db = helper.getWritableDatabase()) != null;
+				}
+				catch( SQLException e )
+				{
+					return false;
+				}
+			}
+
+			@Override
+			protected void onPostExecute( Boolean success )
+			{
+				if( success )
+					return;
+
+				Toast.makeText(
+					context,
+					R.string.error_database,
+					Toast.LENGTH_LONG ).show();
+			}
+		}.execute();
 	}
 
 	public boolean isOpen()
@@ -236,39 +262,6 @@ public class DataSource
 				0xff007ac6,
 				0xffe86f13,
 				0xffcf6310 } );
-	}
-
-	private void openAsync(
-		final OpenHelper helper,
-		final Context context )
-	{
-		new AsyncTask<Void, Void, Boolean>()
-		{
-			@Override
-			protected Boolean doInBackground( Void... nothings )
-			{
-				try
-				{
-					return (db = helper.getWritableDatabase()) != null;
-				}
-				catch( SQLException e )
-				{
-					return false;
-				}
-			}
-
-			@Override
-			protected void onPostExecute( Boolean success )
-			{
-				if( success )
-					return;
-
-				Toast.makeText(
-					context,
-					R.string.error_database,
-					Toast.LENGTH_LONG ).show();
-			}
-		}.execute();
 	}
 
 	private class OpenHelper extends SQLiteOpenHelper

@@ -9,7 +9,7 @@ import android.app.Application;
 
 public class WaveLinesWallpaperApplication extends Application
 {
-	public static DataSource dataSource;
+	public static final DataSource dataSource = new DataSource();
 	//public static boolean batteryLow = false;
 
 	@Override
@@ -23,6 +23,6 @@ public class WaveLinesWallpaperApplication extends Application
 			false );
 
 		preferences = new Preferences( this );*/
-		dataSource = new DataSource( this );
+		dataSource.openAsync( this );
 	}
 }
