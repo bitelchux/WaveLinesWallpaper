@@ -1,4 +1,7 @@
 *.swp
+*.iml
+.idea
 .gradle
 build
 infer-out
+.aside
