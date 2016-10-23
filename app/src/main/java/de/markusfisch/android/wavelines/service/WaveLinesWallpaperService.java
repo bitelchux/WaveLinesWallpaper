@@ -9,28 +9,25 @@ import android.graphics.Canvas;
 import android.preference.PreferenceManager;
 import android.view.SurfaceHolder;
 
-public class WaveLinesWallpaperService extends CanvasWallpaperService
-{
+public class WaveLinesWallpaperService extends CanvasWallpaperService {
 	@Override
-	public Engine onCreateEngine()
-	{
+	public Engine onCreateEngine() {
 		return new WaveLinesEngine();
 	}
 
 	private class WaveLinesEngine
-		extends CanvasWallpaperEngine
-		//implements SharedPreferences.OnSharedPreferenceChangeListener
+			extends CanvasWallpaperEngine
+			//implements SharedPreferences.OnSharedPreferenceChangeListener
 	{
 		private final WaveLinesRenderer renderer = new WaveLinesRenderer();
 
-		public WaveLinesEngine()
-		{
+		public WaveLinesEngine() {
 			super();
 
 			PreferenceManager.setDefaultValues(
-				WaveLinesWallpaperService.this,
-				R.xml.preferences,
-				false );
+					WaveLinesWallpaperService.this,
+					R.xml.preferences,
+					false);
 
 			/*SharedPreferences preferences =
 				WaveLinesWallpaperService.this.getSharedPreferences(
@@ -65,30 +62,28 @@ public class WaveLinesWallpaperService extends CanvasWallpaperService
 				new Theme() );*/
 
 			delay = 100;
-			renderer.init( new Theme() );
+			renderer.init(new Theme());
 		}
 
 		@Override
 		public void onSurfaceChanged(
-			SurfaceHolder holder,
-			int format,
-			int width,
-			int height )
-		{
+				SurfaceHolder holder,
+				int format,
+				int width,
+				int height) {
 			super.onSurfaceChanged(
-				holder,
-				format,
-				width,
-				height );
+					holder,
+					format,
+					width,
+					height);
 
-			renderer.setup( width, height );
+			renderer.setup(width, height);
 		}
 
 		@Override
-		protected void drawFrame( Canvas canvas, long dt )
-		{
+		protected void drawFrame(Canvas canvas, long dt) {
 			canvas.save();
-			renderer.draw( canvas, dt );
+			renderer.draw(canvas, dt);
 			canvas.restore();
 		}
 	}

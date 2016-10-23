@@ -10,84 +10,63 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 
-public class ThemeAdapter extends CursorAdapter
-{
+public class ThemeAdapter extends CursorAdapter {
 	public int idColumn;
 	public int colorsColumn;
 
-	public ThemeAdapter( Context context, Cursor cursor )
-	{
-		super( context, cursor, false );
-
+	public ThemeAdapter(Context context, Cursor cursor) {
+		super(context, cursor, false);
 		findColumnIndices();
 	}
 
 	@Override
-	public View newView(
-		Context context,
-		Cursor cursor,
-		ViewGroup parent )
-	{
-		LayoutInflater inflater = LayoutInflater.from(
-			parent.getContext() );
-
-		return inflater.inflate(
-			R.layout.row_theme,
-			parent,
-			false );
+	public View newView(Context context, Cursor cursor, ViewGroup parent) {
+		LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+		return inflater.inflate(R.layout.row_theme, parent, false);
 	}
 
 	@Override
-	public void bindView(
-		View view,
-		Context context,
-		Cursor cursor )
-	{
-		setData( getViewHolder( view ), cursor );
+	public void bindView(View view, Context context, Cursor cursor) {
+		setData(getViewHolder(view), cursor);
 	}
 
-	private ViewHolder getViewHolder( View view )
-	{
+	private ViewHolder getViewHolder(View view) {
 		ViewHolder holder;
 
-		if( (holder = (ViewHolder)view.getTag()) == null )
-		{
+		if ((holder = (ViewHolder) view.getTag()) == null) {
 			holder = new ViewHolder();
-			holder.colors = view.findViewById( R.id.colors );
+			holder.colors = view.findViewById(R.id.colors);
 		}
 
 		return holder;
 	}
 
-	private void setData( ViewHolder holder, Cursor cursor )
-	{
-		if( holder == null )
+	private void setData(ViewHolder holder, Cursor cursor) {
+		if (holder == null) {
 			return;
+		}
 
-		int colors[] = DataSource.colorsFromCursor( cursor );
+		int colors[] = DataSource.colorsFromCursor(cursor);
 
-		if( colors == null ||
-			colors.length < 1 )
+		if (colors == null || colors.length < 1) {
 			return;
+		}
 
-		holder.colors.setBackgroundColor( colors[0] );
+		holder.colors.setBackgroundColor(colors[0]);
 	}
 
-	private void findColumnIndices()
-	{
+	private void findColumnIndices() {
 		Cursor cursor = getCursor();
 
-		if( cursor == null )
+		if (cursor == null) {
 			return;
+		}
 
-		idColumn = cursor.getColumnIndex(
-			DataSource.THEMES_ID );
-		colorsColumn = cursor.getColumnIndex(
-			DataSource.THEMES_COLORS );
+		idColumn = cursor.getColumnIndex(DataSource.THEMES_ID);
+		colorsColumn = cursor.getColumnIndex(DataSource.THEMES_COLORS);
 	}
 
-	private static final class ViewHolder
-	{
-		public View colors;
+	private static final class ViewHolder {
+		private View colors;
 	}
 }

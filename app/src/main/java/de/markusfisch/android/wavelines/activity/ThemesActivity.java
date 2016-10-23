@@ -10,34 +10,29 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-public class ThemesActivity extends ListActivity
-{
+public class ThemesActivity extends ListActivity {
 	@Override
-	protected void onCreate( Bundle state )
-	{
-		super.onCreate( state );
-		requestWindowFeature( Window.FEATURE_NO_TITLE );
+	protected void onCreate(Bundle state) {
+		super.onCreate(state);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-		setListAdapter( new ThemeAdapter(
-			this,
-			WaveLinesWallpaperApplication
-				.dataSource
-				.queryThemes() ) );
+		setListAdapter(new ThemeAdapter(
+				this,
+				WaveLinesWallpaperApplication
+						.dataSource
+						.queryThemes()));
 
 		final ListView listView = getListView();
-
-		listView.setChoiceMode( ListView.CHOICE_MODE_SINGLE );
+		listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		listView.setOnItemClickListener(
-			new AdapterView.OnItemClickListener()
-			{
-				@Override
-				public void onItemClick(
-					AdapterView<?> parent,
-					View view,
-					int position,
-					long id )
-				{
-				}
-			} );
+				new AdapterView.OnItemClickListener() {
+					@Override
+					public void onItemClick(
+							AdapterView<?> parent,
+							View view,
+							int position,
+							long id) {
+					}
+				});
 	}
 }

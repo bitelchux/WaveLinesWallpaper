@@ -15,8 +15,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 
-public class DataSource
-{
+public class DataSource {
 	public static final String THEMES = "themes";
 	public static final String THEMES_ID = "_id";
 	public static final String THEMES_COUPLED = "coupled";
@@ -28,77 +27,70 @@ public class DataSource
 
 	private SQLiteDatabase db;
 
-	public void openAsync( final Context context )
-	{
-		final OpenHelper helper = new OpenHelper( context );
+	public void openAsync(final Context context) {
+		final OpenHelper helper = new OpenHelper(context);
 
-		new AsyncTask<Void, Void, Boolean>()
-		{
+		new AsyncTask<Void, Void, Boolean>() {
 			@Override
-			protected Boolean doInBackground( Void... nothings )
-			{
-				try
-				{
+			protected Boolean doInBackground(Void... nothings) {
+				try {
 					return (db = helper.getWritableDatabase()) != null;
-				}
-				catch( SQLException e )
-				{
+				} catch (SQLException e) {
 					return false;
 				}
 			}
 
 			@Override
-			protected void onPostExecute( Boolean success )
-			{
-				if( success )
+			protected void onPostExecute(Boolean success) {
+				if (success) {
 					return;
+				}
 
 				Toast.makeText(
-					context,
-					R.string.error_database,
-					Toast.LENGTH_LONG ).show();
+						context,
+						R.string.error_database,
+						Toast.LENGTH_LONG).show();
 			}
 		}.execute();
 	}
 
-	public boolean isOpen()
-	{
+	public boolean isOpen() {
 		return db != null;
 	}
 
-	public Cursor queryThemes()
-	{
+	public Cursor queryThemes() {
 		return db.rawQuery(
-			"SELECT "+
-				THEMES_ID+","+
-				THEMES_COLORS+
-				" FROM "+THEMES+
-				" ORDER BY "+THEMES_ID,
-			null );
+				"SELECT " +
+						THEMES_ID + "," +
+						THEMES_COLORS +
+						" FROM " + THEMES +
+						" ORDER BY " + THEMES_ID,
+				null);
 	}
 
-	public Theme getTheme( long id )
-	{
+	public Theme getTheme(long id) {
 		Cursor cursor = db.rawQuery(
-			"SELECT "+
-				THEMES_ID+","+
-				THEMES_COUPLED+","+
-				THEMES_UNIFORM+","+
-				THEMES_LINES+","+
-				THEMES_WAVES+","+
-				THEMES_AMPLITUDE+","+
-				THEMES_COLORS+
-				" FROM "+THEMES+
-				" WHERE "+THEMES_ID+"="+id,
-			null );
+				"SELECT " +
+						THEMES_ID + "," +
+						THEMES_COUPLED + "," +
+						THEMES_UNIFORM + "," +
+						THEMES_LINES + "," +
+						THEMES_WAVES + "," +
+						THEMES_AMPLITUDE + "," +
+						THEMES_COLORS +
+						" FROM " + THEMES +
+						" WHERE " + THEMES_ID + "=" + id,
+				null);
 
-		if( cursor == null )
+		if (cursor == null) {
 			return null;
+		}
 
 		Theme theme = null;
 
-		if( cursor.moveToFirst() )
-			theme = themeFromCursor( cursor );
+		if (cursor.moveToFirst()) {
+			theme = themeFromCursor(cursor);
+		}
 
 		cursor.close();
 
@@ -106,204 +98,191 @@ public class DataSource
 	}
 
 	public long insertTheme(
-		boolean coupled,
-		boolean uniform,
-		int lines,
-		int waves,
-		double amplitude,
-		int colors[] )
-	{
+			boolean coupled,
+			boolean uniform,
+			int lines,
+			int waves,
+			double amplitude,
+			int colors[]) {
 		return insertTheme(
-			db,
-			coupled,
-			uniform,
-			lines,
-			waves,
-			amplitude,
-			colors );
-	}
-
-	public void updateTheme(
-		long id,
-		boolean coupled,
-		boolean uniform,
-		int lines,
-		int waves,
-		double amplitude,
-		int colors[] )
-	{
-		db.update(
-			THEMES,
-			getThemeContentValues(
+				db,
 				coupled,
 				uniform,
 				lines,
 				waves,
 				amplitude,
-				colors ),
-			THEMES_ID+"="+id,
-			null );
+				colors);
 	}
 
-	public void deleteTheme( long id )
-	{
+	public void updateTheme(
+			long id,
+			boolean coupled,
+			boolean uniform,
+			int lines,
+			int waves,
+			double amplitude,
+			int colors[]) {
+		db.update(
+				THEMES,
+				getThemeContentValues(
+						coupled,
+						uniform,
+						lines,
+						waves,
+						amplitude,
+						colors),
+				THEMES_ID + "=" + id,
+				null);
+	}
+
+	public void deleteTheme(long id) {
 		db.delete(
-			THEMES,
-			THEMES_ID+"="+id,
-			null );
+				THEMES,
+				THEMES_ID + "=" + id,
+				null);
 	}
 
-	public static int[] colorsFromCursor( Cursor cursor )
-	{
+	public static int[] colorsFromCursor(Cursor cursor) {
 		byte bytes[] = cursor.getBlob(
-			cursor.getColumnIndex( THEMES_COLORS ) );
+				cursor.getColumnIndex(THEMES_COLORS));
 
-		if( bytes == null )
+		if (bytes == null) {
 			return null;
+		}
 
 		IntBuffer ib = ByteBuffer
-			.wrap( bytes )
-			.order( ByteOrder.nativeOrder() )
-			.asIntBuffer();
+				.wrap(bytes)
+				.order(ByteOrder.nativeOrder())
+				.asIntBuffer();
 
 		int colors[] = new int[ib.remaining()];
-		ib.get( colors );
+		ib.get(colors);
 
 		return colors;
 	}
 
-	private Theme themeFromCursor( Cursor cursor )
-	{
+	private Theme themeFromCursor(Cursor cursor) {
 		return new Theme(
-			cursor.getInt(
-				cursor.getColumnIndex( THEMES_COUPLED ) ) > 0,
-			cursor.getInt(
-				cursor.getColumnIndex( THEMES_UNIFORM ) ) > 0,
-			cursor.getInt(
-				cursor.getColumnIndex( THEMES_LINES ) ),
-			cursor.getInt(
-				cursor.getColumnIndex( THEMES_WAVES ) ),
-			cursor.getFloat(
-				cursor.getColumnIndex( THEMES_AMPLITUDE ) ),
-			colorsFromCursor( cursor ) );
+				cursor.getInt(
+						cursor.getColumnIndex(THEMES_COUPLED)) > 0,
+				cursor.getInt(
+						cursor.getColumnIndex(THEMES_UNIFORM)) > 0,
+				cursor.getInt(
+						cursor.getColumnIndex(THEMES_LINES)),
+				cursor.getInt(
+						cursor.getColumnIndex(THEMES_WAVES)),
+				cursor.getFloat(
+						cursor.getColumnIndex(THEMES_AMPLITUDE)),
+				colorsFromCursor(cursor));
 	}
 
 	private static long insertTheme(
-		SQLiteDatabase db,
-		boolean coupled,
-		boolean uniform,
-		int lines,
-		int waves,
-		double amplitude,
-		int colors[] )
-	{
+			SQLiteDatabase db,
+			boolean coupled,
+			boolean uniform,
+			int lines,
+			int waves,
+			double amplitude,
+			int colors[]) {
 		return db.insert(
-			THEMES,
-			null,
-			getThemeContentValues(
-				coupled,
-				uniform,
-				lines,
-				waves,
-				amplitude,
-				colors ) );
+				THEMES,
+				null,
+				getThemeContentValues(
+						coupled,
+						uniform,
+						lines,
+						waves,
+						amplitude,
+						colors));
 	}
 
 	private static ContentValues getThemeContentValues(
-		boolean coupled,
-		boolean uniform,
-		int lines,
-		int waves,
-		double amplitude,
-		int colors[] )
-	{
-		ByteBuffer bb = ByteBuffer.allocate( colors.length << 2 );
-		bb.order( ByteOrder.nativeOrder() );
+			boolean coupled,
+			boolean uniform,
+			int lines,
+			int waves,
+			double amplitude,
+			int colors[]) {
+		ByteBuffer bb = ByteBuffer.allocate(colors.length << 2);
+		bb.order(ByteOrder.nativeOrder());
 		IntBuffer ib = bb.asIntBuffer();
-		ib.put( colors );
+		ib.put(colors);
 
 		ContentValues cv = new ContentValues();
-		cv.put( THEMES_COUPLED, coupled );
-		cv.put( THEMES_UNIFORM, uniform );
-		cv.put( THEMES_LINES, lines );
-		cv.put( THEMES_WAVES, waves );
-		cv.put( THEMES_AMPLITUDE, amplitude );
-		cv.put( THEMES_COLORS, bb.array() );
+		cv.put(THEMES_COUPLED, coupled);
+		cv.put(THEMES_UNIFORM, uniform);
+		cv.put(THEMES_LINES, lines);
+		cv.put(THEMES_WAVES, waves);
+		cv.put(THEMES_AMPLITUDE, amplitude);
+		cv.put(THEMES_COLORS, bb.array());
 
 		return cv;
 	}
 
-	private void insertDefaultThemes( SQLiteDatabase db )
-	{
+	private void insertDefaultThemes(SQLiteDatabase db) {
 		insertTheme(
-			db,
-			true,
-			false,
-			24,
-			3,
-			.02,
-			new int[] {
-				0xff0060a0,
-				0xff00b0f0,
-				0xff0080c0,
-				0xff00a0e0,
-				0xff0070b0,
-				0xff0090d0 } );
+				db,
+				true,
+				false,
+				24,
+				3,
+				.02,
+				new int[]{
+						0xff0060a0,
+						0xff00b0f0,
+						0xff0080c0,
+						0xff00a0e0,
+						0xff0070b0,
+						0xff0090d0});
 
 		insertTheme(
-			db,
-			false,
-			false,
-			4,
-			2,
-			.04,
-			new int[] {
-				0xff00b06c,
-				0xff007ac6,
-				0xffe86f13,
-				0xffcf6310 } );
+				db,
+				false,
+				false,
+				4,
+				2,
+				.04,
+				new int[]{
+						0xff00b06c,
+						0xff007ac6,
+						0xffe86f13,
+						0xffcf6310});
 	}
 
-	private class OpenHelper extends SQLiteOpenHelper
-	{
-		public OpenHelper( Context c )
-		{
-			super( c, "themes.db", null, 1 );
+	private class OpenHelper extends SQLiteOpenHelper {
+		public OpenHelper(Context c) {
+			super(c, "themes.db", null, 1);
 		}
 
 		@Override
-		public void onCreate( SQLiteDatabase db )
-		{
-			db.execSQL( "DROP TABLE IF EXISTS "+THEMES );
-			db.execSQL(
-				"CREATE TABLE "+THEMES+" ("+
-					THEMES_ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
-					THEMES_COUPLED+" INTEGER,"+
-					THEMES_UNIFORM+" INTEGER,"+
-					THEMES_LINES+" INTEGER,"+
-					THEMES_WAVES+" INTEGER,"+
-					THEMES_AMPLITUDE+" DOUBLE,"+
-					THEMES_COLORS+" BLOB );" );
+		public void onCreate(SQLiteDatabase db) {
+			db.execSQL("DROP TABLE IF EXISTS " + THEMES);
+			db.execSQL("CREATE TABLE " + THEMES + " (" +
+					THEMES_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+					THEMES_COUPLED + " INTEGER," +
+					THEMES_UNIFORM + " INTEGER," +
+					THEMES_LINES + " INTEGER," +
+					THEMES_WAVES + " INTEGER," +
+					THEMES_AMPLITUDE + " DOUBLE," +
+					THEMES_COLORS + " BLOB );");
 
-			insertDefaultThemes( db );
+			insertDefaultThemes(db);
 		}
 
 		@Override
 		public void onDowngrade(
-			SQLiteDatabase db,
-			int oldVersion,
-			int newVersion )
-		{
+				SQLiteDatabase db,
+				int oldVersion,
+				int newVersion) {
 			// without that method, a downgrade will
 			// cause an exception
 		}
 
 		@Override
 		public void onUpgrade(
-			SQLiteDatabase db,
-			int oldVersion,
-			int newVersion )
-		{
+				SQLiteDatabase db,
+				int oldVersion,
+				int newVersion) {
 			// there'll be upgrades
 		}
 	}

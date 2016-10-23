@@ -6,117 +6,100 @@ import android.graphics.Canvas;
 import android.service.wallpaper.WallpaperService;
 import android.view.SurfaceHolder;
 
-public abstract class CanvasWallpaperService extends WallpaperService
-{
-	protected abstract class CanvasWallpaperEngine extends Engine
-	{
+public abstract class CanvasWallpaperService extends WallpaperService {
+	protected abstract class CanvasWallpaperEngine extends Engine {
 		protected int delay = 40;
 
 		private final Handler handler = new Handler();
-		private final Runnable runnable = new Runnable()
-		{
-			public void run()
-			{
+		private final Runnable runnable = new Runnable() {
+			public void run() {
 				nextFrame();
 			}
 		};
 
 		private boolean visible = false;
-		private long time = 0;
+		private long last = 0;
 
 		@Override
-		public void onDestroy()
-		{
+		public void onDestroy() {
 			super.onDestroy();
-
 			stopRunnable();
 		}
 
 		@Override
-		public void onVisibilityChanged( boolean v )
-		{
+		public void onVisibilityChanged(boolean v) {
 			visible = v;
 
-			if( visible )
-			{
-				time = SystemClock.elapsedRealtime();
+			if (visible) {
+				last = SystemClock.elapsedRealtime();
 				nextFrame();
-			}
-			else
+			} else {
 				stopRunnable();
+			}
 		}
 
 		@Override
 		public void onSurfaceChanged(
-			SurfaceHolder holder,
-			int format,
-			int width,
-			int height )
-		{
+				SurfaceHolder holder,
+				int format,
+				int width,
+				int height) {
 			super.onSurfaceChanged(
-				holder,
-				format,
-				width,
-				height );
+					holder,
+					format,
+					width,
+					height);
 
 			nextFrame();
 		}
 
 		@Override
-		public void onSurfaceDestroyed( SurfaceHolder holder )
-		{
+		public void onSurfaceDestroyed(SurfaceHolder holder) {
 			visible = false;
 			stopRunnable();
 
-			super.onSurfaceDestroyed( holder );
+			super.onSurfaceDestroyed(holder);
 		}
 
 		@Override
 		public void onOffsetsChanged(
-			float xOffset,
-			float yOffset,
-			float xOffsetStep,
-			float yOffsetStep,
-			int xPixelOffset,
-			int yPixelOffset )
-		{
+				float xOffset,
+				float yOffset,
+				float xOffsetStep,
+				float yOffsetStep,
+				int xPixelOffset,
+				int yPixelOffset) {
 		}
 
-		protected abstract void drawFrame(
-			Canvas canvas,
-			long elapsedTime );
+		protected abstract void drawFrame(Canvas canvas, long elapsedTime);
 
-		protected void nextFrame()
-		{
+		protected void nextFrame() {
 			stopRunnable();
 
-			if( !visible )
+			if (!visible) {
 				return;
+			}
 
-			handler.postDelayed( runnable, delay );
+			handler.postDelayed(runnable, delay);
 
 			SurfaceHolder holder = getSurfaceHolder();
 			Canvas canvas = null;
 
-			try
-			{
-				if( (canvas = holder.lockCanvas()) != null )
-				{
+			try {
+				if ((canvas = holder.lockCanvas()) != null) {
 					long now = SystemClock.elapsedRealtime();
-					drawFrame( canvas, now-time );
-					time = now;
+					drawFrame(canvas, now - last);
+					last = now;
 				}
-			}
-			finally
-			{
-				if( canvas != null )
-					holder.unlockCanvasAndPost( canvas );
+			} finally {
+				if (canvas != null) {
+					holder.unlockCanvasAndPost(canvas);
+				}
 			}
 		}
 
-		private void stopRunnable()
-		{
-			handler.removeCallbacks( runnable );
+		private void stopRunnable() {
+			handler.removeCallbacks(runnable);
 		}
 	}
 }

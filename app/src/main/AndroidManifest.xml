@@ -6,7 +6,6 @@
 	android:versionCode="4"
 	android:versionName="1.3.0"
 	android:installLocation="auto">
-	<uses-feature android:name="android.software.live_wallpaper"/>
 	<supports-screens
 		android:resizeable="true"
 		android:smallScreens="true"
@@ -14,10 +13,12 @@
 		android:largeScreens="true"
 		android:xlargeScreens="true"
 		android:anyDensity="true"/>
+	<uses-feature android:name="android.software.live_wallpaper"/>
 	<application
 		android:name=".app.WaveLinesWallpaperApplication"
 		android:allowBackup="true"
 		android:fullBackupContent="true"
+		android:supportsRtl="true"
 		android:label="@string/title"
 		android:icon="@mipmap/ic_launcher">
 		<service
@@ -25,8 +26,7 @@
 			android:name=".service.WaveLinesWallpaperService"
 			android:permission="android.permission.BIND_WALLPAPER">
 			<intent-filter>
-				<action
-					android:name="android.service.wallpaper.WallpaperService"/>
+				<action android:name="android.service.wallpaper.WallpaperService"/>
 			</intent-filter>
 			<meta-data
 				android:name="android.service.wallpaper"
