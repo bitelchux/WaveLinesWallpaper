@@ -1,22 +1,34 @@
 apply plugin: 'com.android.application'
+apply plugin: 'findbugs'
 
-android
-{
-	compileSdkVersion 23
+android {
+	compileSdkVersion 25
 	buildToolsVersion "23.0.2"
 
-	defaultConfig
-	{
+	defaultConfig {
 		minSdkVersion 7
-		targetSdkVersion 23
+		targetSdkVersion 25
 	}
 
-	buildTypes
-	{
-		release
-		{
+	buildTypes {
+		release {
 			minifyEnabled true
 			shrinkResources true
 		}
+	}
+}
+
+task findbugs(type: FindBugs, dependsOn: 'assembleDebug') {
+	excludeFilter = file('./findbugs-exclude.xml')
+	source = fileTree('src/main/java/')
+	classes = files(
+		"${project.rootDir}/app/build/intermediates/classes")
+	classpath = files()
+
+	effort = 'default'
+
+	reports {
+		xml.enabled = false
+		html.enabled = true
 	}
 }

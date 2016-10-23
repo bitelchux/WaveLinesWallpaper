@@ -9,7 +9,10 @@ debug:
 lint:
 	./gradlew lintDebug
 
-release: lint
+findbugs:
+	./gradlew findBugs
+
+release: lint findbugs
 	@./gradlew assembleRelease \
 		-Pandroid.injected.signing.store.file=$(ANDROID_KEYFILE) \
 		-Pandroid.injected.signing.store.password=$(ANDROID_STORE_PASSWORD) \
@@ -17,7 +20,7 @@ release: lint
 		-Pandroid.injected.signing.key.password=$(ANDROID_KEY_PASSWORD)
 
 install:
-	adb $(TARGET) install -rk $(APK)
+	adb $(TARGET) install -r $(APK)
 
 start:
 	adb $(TARGET) shell 'am start -n $(PACKAGE)/.activity.MainActivity'
