@@ -29,13 +29,12 @@ public class WaveLinesRenderer {
 		this.height = height;
 	}
 
-	public void draw(Canvas canvas, long dt) {
+	public void draw(Canvas canvas, long delta) {
 		if (waveLines == null) {
 			create();
-			return;
 		}
 
-		final double elapsed = dt / 1000.0;
+		final double elapsed = delta / 1000.0;
 		float r = 0;
 
 		for (int i = theme.lines; i-- > 0; ) {
@@ -218,7 +217,7 @@ public class WaveLinesRenderer {
 			yang = y;
 		}
 
-		private void flow(double dt) {
+		private void flow(double delta) {
 			// raise the power if the wave gets shallow to avoid
 			// having straight lines for too long
 			float p = amplitudeMax - Math.abs(amplitude);
@@ -229,7 +228,7 @@ public class WaveLinesRenderer {
 				p = -p;
 			}
 
-			amplitude += p * dt;
+			amplitude += p * delta;
 
 			if (amplitude > amplitudeMax ||
 					amplitude < amplitudeMin) {
@@ -242,7 +241,7 @@ public class WaveLinesRenderer {
 				power = -power;
 			}
 
-			shift += speed * dt;
+			shift += speed * delta;
 
 			if (shift > 0) {
 				shift -= length * 2;
@@ -252,7 +251,7 @@ public class WaveLinesRenderer {
 				thickness = (thicknessMax + thicknessMin) -
 						waveLines[yang].thickness;
 			} else if (growth != 0) {
-				thickness += growth * dt;
+				thickness += growth * delta;
 
 				if (thickness > thicknessMax ||
 						thickness < thicknessMin) {

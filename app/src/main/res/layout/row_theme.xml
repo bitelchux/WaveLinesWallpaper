@@ -1,5 +1,8 @@
-<View
+<ImageView
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/colors"
+	android:id="@+id/thumbnail"
+	android:contentDescription="@string/thumbnail"
+	android:adjustViewBounds="true"
+	android:scaleType="centerInside"
 	android:layout_width="match_parent"
-	android:layout_height="16dp"/>
+	android:layout_height="128dp"/>

@@ -6,7 +6,7 @@ android {
 	buildToolsVersion "23.0.2"
 
 	defaultConfig {
-		minSdkVersion 7
+		minSdkVersion 9
 		targetSdkVersion 25
 	}
 
@@ -16,6 +16,10 @@ android {
 			shrinkResources true
 		}
 	}
+}
+
+dependencies {
+	compile "com.android.support:appcompat-v7:25.0.0"
 }
 
 task findbugs(type: FindBugs, dependsOn: 'assembleDebug') {

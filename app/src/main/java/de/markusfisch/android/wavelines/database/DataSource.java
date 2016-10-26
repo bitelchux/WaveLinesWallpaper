@@ -1,9 +1,12 @@
 package de.markusfisch.android.wavelines.database;
 
+import de.markusfisch.android.wavelines.graphics.WaveLinesRenderer;
 import de.markusfisch.android.wavelines.R;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -11,6 +14,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
@@ -24,6 +28,7 @@ public class DataSource {
 	public static final String THEMES_WAVES = "waves";
 	public static final String THEMES_AMPLITUDE = "amplitude";
 	public static final String THEMES_COLORS = "colors";
+	public static final String THEMES_THUMBNAIL = "thumbnail";
 
 	private SQLiteDatabase db;
 
@@ -62,7 +67,7 @@ public class DataSource {
 		return db.rawQuery(
 				"SELECT " +
 						THEMES_ID + "," +
-						THEMES_COLORS +
+						THEMES_THUMBNAIL +
 						" FROM " + THEMES +
 						" ORDER BY " + THEMES_ID,
 				null);
@@ -102,7 +107,7 @@ public class DataSource {
 			boolean uniform,
 			int lines,
 			int waves,
-			double amplitude,
+			float amplitude,
 			int colors[]) {
 		return insertTheme(
 				db,
@@ -120,7 +125,7 @@ public class DataSource {
 			boolean uniform,
 			int lines,
 			int waves,
-			double amplitude,
+			float amplitude,
 			int colors[]) {
 		db.update(
 				THEMES,
@@ -182,7 +187,7 @@ public class DataSource {
 			boolean uniform,
 			int lines,
 			int waves,
-			double amplitude,
+			float amplitude,
 			int colors[]) {
 		return db.insert(
 				THEMES,
@@ -201,7 +206,7 @@ public class DataSource {
 			boolean uniform,
 			int lines,
 			int waves,
-			double amplitude,
+			float amplitude,
 			int colors[]) {
 		ByteBuffer bb = ByteBuffer.allocate(colors.length << 2);
 		bb.order(ByteOrder.nativeOrder());
@@ -215,8 +220,48 @@ public class DataSource {
 		cv.put(THEMES_WAVES, waves);
 		cv.put(THEMES_AMPLITUDE, amplitude);
 		cv.put(THEMES_COLORS, bb.array());
+		cv.put(THEMES_THUMBNAIL, bitmapToPng(createThumbnail(
+				coupled,
+				uniform,
+				lines,
+				waves,
+				amplitude,
+				colors)));
 
 		return cv;
+	}
+
+	private static Bitmap createThumbnail(
+			boolean coupled,
+			boolean uniform,
+			int lines,
+			int waves,
+			float amplitude,
+			int colors[]) {
+		int size = 128;
+		Bitmap bitmap = Bitmap.createBitmap(
+				size,
+				size,
+				Bitmap.Config.ARGB_8888);
+		Canvas canvas = new Canvas(bitmap);
+		WaveLinesRenderer renderer = new WaveLinesRenderer();
+		renderer.init(new Theme(
+				coupled,
+				uniform,
+				lines,
+				waves,
+				amplitude,
+				colors));
+		renderer.setup(size, size);
+		renderer.draw(canvas, 16l);
+		return bitmap;
+	}
+
+	private static byte[] bitmapToPng(Bitmap bitmap) {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+
+		return out.toByteArray();
 	}
 
 	private void insertDefaultThemes(SQLiteDatabase db) {
@@ -226,7 +271,7 @@ public class DataSource {
 				false,
 				24,
 				3,
-				.02,
+				.02f,
 				new int[]{
 						0xff0060a0,
 						0xff00b0f0,
@@ -241,7 +286,7 @@ public class DataSource {
 				false,
 				4,
 				2,
-				.04,
+				.04f,
 				new int[]{
 						0xff00b06c,
 						0xff007ac6,
@@ -264,7 +309,8 @@ public class DataSource {
 					THEMES_LINES + " INTEGER," +
 					THEMES_WAVES + " INTEGER," +
 					THEMES_AMPLITUDE + " DOUBLE," +
-					THEMES_COLORS + " BLOB );");
+					THEMES_COLORS + " BLOB," +
+					THEMES_THUMBNAIL + " BLOB);");
 
 			insertDefaultThemes(db);
 		}

@@ -15,12 +15,13 @@
 		android:anyDensity="true"/>
 	<uses-feature android:name="android.software.live_wallpaper"/>
 	<application
-		android:name=".app.WaveLinesWallpaperApplication"
+		android:name=".app.WaveLinesApplication"
 		android:allowBackup="true"
 		android:fullBackupContent="true"
 		android:supportsRtl="true"
 		android:label="@string/title"
-		android:icon="@mipmap/ic_launcher">
+		android:icon="@mipmap/ic_launcher"
+		android:theme="@style/AppTheme">
 		<service
 			android:label="@string/title"
 			android:name=".service.WaveLinesWallpaperService"
@@ -33,7 +34,7 @@
 				android:resource="@xml/wallpaper"/>
 		</service>
 		<activity
-			android:name=".activity.ThemesActivity"
+			android:name=".activity.MainActivity"
 			android:label="@string/themes"
 			android:exported="true"/>
 	</application>

@@ -5,14 +5,15 @@ import de.markusfisch.android.wavelines.R;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
 
 public class ThemeAdapter extends CursorAdapter {
-	public int idColumn;
-	public int colorsColumn;
+	public int thumbnailColumn;
 
 	public ThemeAdapter(Context context, Cursor cursor) {
 		super(context, cursor, false);
@@ -35,7 +36,8 @@ public class ThemeAdapter extends CursorAdapter {
 
 		if ((holder = (ViewHolder) view.getTag()) == null) {
 			holder = new ViewHolder();
-			holder.colors = view.findViewById(R.id.colors);
+			holder.thumbnail = (ImageView) view.findViewById(
+					R.id.thumbnail);
 		}
 
 		return holder;
@@ -46,13 +48,11 @@ public class ThemeAdapter extends CursorAdapter {
 			return;
 		}
 
-		int colors[] = DataSource.colorsFromCursor(cursor);
-
-		if (colors == null || colors.length < 1) {
-			return;
-		}
-
-		holder.colors.setBackgroundColor(colors[0]);
+		byte bytes[] = cursor.getBlob(thumbnailColumn);
+		holder.thumbnail.setImageBitmap(BitmapFactory.decodeByteArray(
+					bytes,
+					0,
+					bytes.length));
 	}
 
 	private void findColumnIndices() {
@@ -62,11 +62,10 @@ public class ThemeAdapter extends CursorAdapter {
 			return;
 		}
 
-		idColumn = cursor.getColumnIndex(DataSource.THEMES_ID);
-		colorsColumn = cursor.getColumnIndex(DataSource.THEMES_COLORS);
+		thumbnailColumn = cursor.getColumnIndex(DataSource.THEMES_THUMBNAIL);
 	}
 
 	private static final class ViewHolder {
-		private View colors;
+		private ImageView thumbnail;
 	}
 }
