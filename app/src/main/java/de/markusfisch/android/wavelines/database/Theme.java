@@ -5,7 +5,7 @@ public class Theme {
 	public final boolean uniform;
 	public final int lines;
 	public final int waves;
-	public final float relativeAmplitude;
+	public final float amplitude;
 	public final int colors[];
 
 	public Theme(
@@ -13,13 +13,13 @@ public class Theme {
 			boolean uniform,
 			int lines,
 			int waves,
-			float relativeAmplitude,
+			float amplitude,
 			int colors[]) {
 		this.coupled = coupled;
 		this.uniform = uniform;
 		this.lines = lines;
 		this.waves = waves;
-		this.relativeAmplitude = relativeAmplitude;
+		this.amplitude = amplitude;
 		this.colors = colors.clone();
 	}
 
@@ -28,7 +28,7 @@ public class Theme {
 		uniform = false;
 		lines = 24;
 		waves = 3;
-		relativeAmplitude = .02f;
+		amplitude = .02f;
 		colors = new int[]{
 				0xff0060a0,
 				0xff00b0f0,

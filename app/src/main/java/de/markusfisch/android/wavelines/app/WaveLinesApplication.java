@@ -1,7 +1,6 @@
 package de.markusfisch.android.wavelines.app;
 
 import de.markusfisch.android.wavelines.database.DataSource;
-import de.markusfisch.android.wavelines.R;
 
 import android.app.Application;
 

@@ -106,7 +106,7 @@ public class WaveLinesRenderer {
 				(float) (maxSize / theme.lines) * 2f);
 		thicknessMin = Math.max(2, .01f * maxSize);
 
-		amplitudeMax = theme.relativeAmplitude * maxSize;
+		amplitudeMax = theme.amplitude * maxSize;
 		amplitudeMin = -amplitudeMax;
 
 		waveLines = new WaveLine[theme.lines];

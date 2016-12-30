@@ -102,40 +102,14 @@ public class DataSource {
 		return theme;
 	}
 
-	public long insertTheme(
-			boolean coupled,
-			boolean uniform,
-			int lines,
-			int waves,
-			float amplitude,
-			int colors[]) {
-		return insertTheme(
-				db,
-				coupled,
-				uniform,
-				lines,
-				waves,
-				amplitude,
-				colors);
+	public long insertTheme(Theme theme) {
+		return insertTheme(db, theme);
 	}
 
-	public void updateTheme(
-			long id,
-			boolean coupled,
-			boolean uniform,
-			int lines,
-			int waves,
-			float amplitude,
-			int colors[]) {
+	public void updateTheme(long id, Theme theme) {
 		db.update(
 				THEMES,
-				getThemeContentValues(
-						coupled,
-						uniform,
-						lines,
-						waves,
-						amplitude,
-						colors),
+				getThemeContentValues(theme),
 				THEMES_ID + "=" + id,
 				null);
 	}
@@ -168,76 +142,40 @@ public class DataSource {
 
 	private Theme themeFromCursor(Cursor cursor) {
 		return new Theme(
-				cursor.getInt(
-						cursor.getColumnIndex(THEMES_COUPLED)) > 0,
-				cursor.getInt(
-						cursor.getColumnIndex(THEMES_UNIFORM)) > 0,
-				cursor.getInt(
-						cursor.getColumnIndex(THEMES_LINES)),
-				cursor.getInt(
-						cursor.getColumnIndex(THEMES_WAVES)),
-				cursor.getFloat(
-						cursor.getColumnIndex(THEMES_AMPLITUDE)),
+				cursor.getInt(cursor.getColumnIndex(THEMES_COUPLED)) > 0,
+				cursor.getInt(cursor.getColumnIndex(THEMES_UNIFORM)) > 0,
+				cursor.getInt(cursor.getColumnIndex(THEMES_LINES)),
+				cursor.getInt(cursor.getColumnIndex(THEMES_WAVES)),
+				cursor.getFloat(cursor.getColumnIndex(THEMES_AMPLITUDE)),
 				colorsFromCursor(cursor));
 	}
 
-	private static long insertTheme(
-			SQLiteDatabase db,
-			boolean coupled,
-			boolean uniform,
-			int lines,
-			int waves,
-			float amplitude,
-			int colors[]) {
+	private static long insertTheme(SQLiteDatabase db, Theme theme) {
 		return db.insert(
 				THEMES,
 				null,
-				getThemeContentValues(
-						coupled,
-						uniform,
-						lines,
-						waves,
-						amplitude,
-						colors));
+				getThemeContentValues(theme));
 	}
 
-	private static ContentValues getThemeContentValues(
-			boolean coupled,
-			boolean uniform,
-			int lines,
-			int waves,
-			float amplitude,
-			int colors[]) {
-		ByteBuffer bb = ByteBuffer.allocate(colors.length << 2);
+	private static ContentValues getThemeContentValues(Theme theme) {
+		ByteBuffer bb = ByteBuffer.allocate(theme.colors.length << 2);
 		bb.order(ByteOrder.nativeOrder());
 		IntBuffer ib = bb.asIntBuffer();
-		ib.put(colors);
+		ib.put(theme.colors);
 
 		ContentValues cv = new ContentValues();
-		cv.put(THEMES_COUPLED, coupled);
-		cv.put(THEMES_UNIFORM, uniform);
-		cv.put(THEMES_LINES, lines);
-		cv.put(THEMES_WAVES, waves);
-		cv.put(THEMES_AMPLITUDE, amplitude);
+		cv.put(THEMES_COUPLED, theme.coupled);
+		cv.put(THEMES_UNIFORM, theme.uniform);
+		cv.put(THEMES_LINES, theme.lines);
+		cv.put(THEMES_WAVES, theme.waves);
+		cv.put(THEMES_AMPLITUDE, theme.amplitude);
 		cv.put(THEMES_COLORS, bb.array());
-		cv.put(THEMES_THUMBNAIL, bitmapToPng(createThumbnail(
-				coupled,
-				uniform,
-				lines,
-				waves,
-				amplitude,
-				colors)));
+		cv.put(THEMES_THUMBNAIL, bitmapToPng(createThumbnail(theme)));
 
 		return cv;
 	}
 
-	private static Bitmap createThumbnail(
-			boolean coupled,
-			boolean uniform,
-			int lines,
-			int waves,
-			float amplitude,
-			int colors[]) {
+	private static Bitmap createThumbnail(Theme theme) {
 		int size = 128;
 		Bitmap bitmap = Bitmap.createBitmap(
 				size,
@@ -245,13 +183,7 @@ public class DataSource {
 				Bitmap.Config.ARGB_8888);
 		Canvas canvas = new Canvas(bitmap);
 		WaveLinesRenderer renderer = new WaveLinesRenderer();
-		renderer.init(new Theme(
-				coupled,
-				uniform,
-				lines,
-				waves,
-				amplitude,
-				colors));
+		renderer.init(theme);
 		renderer.setup(size, size);
 		renderer.draw(canvas, 16l);
 		return bitmap;
@@ -265,23 +197,8 @@ public class DataSource {
 	}
 
 	private void insertDefaultThemes(SQLiteDatabase db) {
-		insertTheme(
-				db,
-				true,
-				false,
-				24,
-				3,
-				.02f,
-				new int[]{
-						0xff0060a0,
-						0xff00b0f0,
-						0xff0080c0,
-						0xff00a0e0,
-						0xff0070b0,
-						0xff0090d0});
-
-		insertTheme(
-				db,
+		insertTheme(db, new Theme());
+		insertTheme(db, new Theme(
 				false,
 				false,
 				4,
@@ -291,12 +208,12 @@ public class DataSource {
 						0xff00b06c,
 						0xff007ac6,
 						0xffe86f13,
-						0xffcf6310});
+						0xffcf6310}));
 	}
 
 	private class OpenHelper extends SQLiteOpenHelper {
-		public OpenHelper(Context c) {
-			super(c, "themes.db", null, 1);
+		public OpenHelper(Context context) {
+			super(context, "themes.db", null, 1);
 		}
 
 		@Override

@@ -5,6 +5,8 @@ import de.markusfisch.android.wavelines.app.WaveLinesApplication;
 import de.markusfisch.android.wavelines.R;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -17,17 +19,7 @@ public class ThemesFragment extends Fragment {
 	private final Runnable queryThemesRunnable = new Runnable() {
 		@Override
 		public void run() {
-			if (!WaveLinesApplication.dataSource.isOpen()) {
-				listView.postDelayed(queryThemesRunnable, 100);
-				return;
-			}
-
-			Context context = getActivity();
-			if (context != null) {
-				listView.setAdapter(new ThemeAdapter(
-						context,
-						WaveLinesApplication.dataSource.queryThemes()));
-			}
+			queryThemes();
 		}
 	};
 
@@ -53,10 +45,40 @@ public class ThemesFragment extends Fragment {
 					View view,
 					int position,
 					long id) {
-				// edit theme
+				getFragmentManager()
+						.beginTransaction()
+						.replace(
+								R.id.content_frame,
+								ThemeEditorFragment.newInstance(id))
+						.commit();
 			}
 		});
 
 		return view;
+	}
+
+	private void queryThemes() {
+		if (!WaveLinesApplication.dataSource.isOpen()) {
+			listView.postDelayed(queryThemesRunnable, 100);
+			return;
+		}
+
+		new AsyncTask<Void, Void, Cursor>() {
+			@Override
+			protected Cursor doInBackground(Void... nothings) {
+				return WaveLinesApplication.dataSource.queryThemes();
+			}
+
+			@Override
+			protected void onPostExecute(Cursor cursor) {
+				if (cursor == null || !isAdded()) {
+					return;
+				}
+
+				listView.setAdapter(new ThemeAdapter(
+						getActivity(),
+						cursor));
+			}
+		}.execute();
 	}
 }
