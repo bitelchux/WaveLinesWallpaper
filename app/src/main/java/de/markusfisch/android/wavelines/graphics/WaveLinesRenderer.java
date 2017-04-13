@@ -16,15 +16,15 @@ public class WaveLinesRenderer {
 	private float amplitudeMin;
 	private Theme theme;
 	private WaveLine waveLines[];
-	private float width = 0;
-	private float height = 0;
+	private float width;
+	private float height;
 
-	public void init(Theme theme) {
+	public void setTheme(Theme theme) {
 		this.theme = theme;
 		waveLines = null;
 	}
 
-	public void setup(int width, int height) {
+	public void setSize(int width, int height) {
 		this.width = width;
 		this.height = height;
 	}

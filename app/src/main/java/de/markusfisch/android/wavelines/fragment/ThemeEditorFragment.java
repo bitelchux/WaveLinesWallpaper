@@ -1,6 +1,6 @@
 package de.markusfisch.android.wavelines.fragment;
 
-import de.markusfisch.android.wavelines.app.WaveLinesApplication;
+import de.markusfisch.android.wavelines.app.WaveLinesApp;
 import de.markusfisch.android.wavelines.database.Theme;
 import de.markusfisch.android.wavelines.R;
 
@@ -33,13 +33,13 @@ public class ThemeEditorFragment extends Fragment {
 		View view = inflater.inflate(
 				R.layout.fragment_theme_editor,
 				container,
-				false );
+				false);
 
 		Theme theme;
 		Bundle args = getArguments();
 		if (args != null &&
 				(themeId = args.getLong(ID)) > 0 &&
-				(theme = WaveLinesApplication.dataSource.getTheme(
+				(theme = WaveLinesApp.dataSource.getTheme(
 						themeId)) != null) {
 			setTheme(theme);
 		}

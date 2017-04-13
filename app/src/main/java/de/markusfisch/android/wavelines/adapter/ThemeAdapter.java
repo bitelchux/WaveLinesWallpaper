@@ -17,7 +17,7 @@ public class ThemeAdapter extends CursorAdapter {
 
 	public ThemeAdapter(Context context, Cursor cursor) {
 		super(context, cursor, false);
-		findColumnIndices();
+		findColumnIndices(cursor);
 	}
 
 	@Override
@@ -38,6 +38,7 @@ public class ThemeAdapter extends CursorAdapter {
 			holder = new ViewHolder();
 			holder.thumbnail = (ImageView) view.findViewById(
 					R.id.thumbnail);
+			view.setTag(holder);
 		}
 
 		return holder;
@@ -55,9 +56,7 @@ public class ThemeAdapter extends CursorAdapter {
 					bytes.length));
 	}
 
-	private void findColumnIndices() {
-		Cursor cursor = getCursor();
-
+	private void findColumnIndices(Cursor cursor) {
 		if (cursor == null) {
 			return;
 		}

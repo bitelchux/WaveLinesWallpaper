@@ -183,8 +183,8 @@ public class DataSource {
 				Bitmap.Config.ARGB_8888);
 		Canvas canvas = new Canvas(bitmap);
 		WaveLinesRenderer renderer = new WaveLinesRenderer();
-		renderer.init(theme);
-		renderer.setup(size, size);
+		renderer.setTheme(theme);
+		renderer.setSize(size, size);
 		renderer.draw(canvas, 16l);
 		return bitmap;
 	}
@@ -192,12 +192,23 @@ public class DataSource {
 	private static byte[] bitmapToPng(Bitmap bitmap) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-
 		return out.toByteArray();
 	}
 
-	private void insertDefaultThemes(SQLiteDatabase db) {
-		insertTheme(db, new Theme());
+	private static void insertDefaultThemes(SQLiteDatabase db) {
+		insertTheme(db, new Theme(
+				true,
+				false,
+				24,
+				3,
+				.02f,
+				new int[]{
+						0xff0060a0,
+						0xff00b0f0,
+						0xff0080c0,
+						0xff00a0e0,
+						0xff0070b0,
+						0xff0090d0}));
 		insertTheme(db, new Theme(
 				false,
 				false,
@@ -211,7 +222,7 @@ public class DataSource {
 						0xffcf6310}));
 	}
 
-	private class OpenHelper extends SQLiteOpenHelper {
+	private static class OpenHelper extends SQLiteOpenHelper {
 		public OpenHelper(Context context) {
 			super(context, "themes.db", null, 1);
 		}
@@ -237,8 +248,6 @@ public class DataSource {
 				SQLiteDatabase db,
 				int oldVersion,
 				int newVersion) {
-			// without that method, a downgrade will
-			// cause an exception
 		}
 
 		@Override
@@ -246,7 +255,6 @@ public class DataSource {
 				SQLiteDatabase db,
 				int oldVersion,
 				int newVersion) {
-			// there'll be upgrades
 		}
 	}
 }

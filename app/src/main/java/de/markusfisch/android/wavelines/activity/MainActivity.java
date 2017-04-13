@@ -13,7 +13,8 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(state);
 		setContentView(R.layout.activity_main);
 
-		initToolbar();
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
 
 		if (state == null) {
 			getSupportFragmentManager()
@@ -21,10 +22,5 @@ public class MainActivity extends AppCompatActivity {
 					.replace(R.id.content_frame, new ThemesFragment())
 					.commit();
 		}
-	}
-
-	private void initToolbar() {
-		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-		setSupportActionBar(toolbar);
 	}
 }

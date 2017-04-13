@@ -2,15 +2,22 @@ apply plugin: 'com.android.application'
 apply plugin: 'findbugs'
 
 android {
-	compileSdkVersion 25
-	buildToolsVersion "25.0.1"
+	compileSdkVersion sdk_version
+	buildToolsVersion build_tools_version
 
 	defaultConfig {
 		minSdkVersion 9
-		targetSdkVersion 25
+		targetSdkVersion sdk_version
+
+		versionCode 4
+		versionName '1.3.0'
 	}
 
 	buildTypes {
+		debug {
+			applicationIdSuffix '.debug'
+		}
+
 		release {
 			minifyEnabled true
 			shrinkResources true
@@ -19,7 +26,8 @@ android {
 }
 
 dependencies {
-	compile "com.android.support:appcompat-v7:25.0.1"
+	compile "com.android.support:appcompat-v7:$support_version"
+	compile "com.android.support:preference-v7:$support_version"
 }
 
 task findbugs(type: FindBugs, dependsOn: 'assembleDebug') {

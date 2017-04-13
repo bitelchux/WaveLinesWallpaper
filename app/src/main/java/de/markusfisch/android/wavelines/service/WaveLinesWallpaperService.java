@@ -1,5 +1,6 @@
 package de.markusfisch.android.wavelines.service;
 
+import de.markusfisch.android.wavelines.app.WaveLinesApp;
 import de.markusfisch.android.wavelines.database.Theme;
 import de.markusfisch.android.wavelines.graphics.WaveLinesRenderer;
 import de.markusfisch.android.wavelines.R;
@@ -15,54 +16,22 @@ public class WaveLinesWallpaperService extends CanvasWallpaperService {
 		return new WaveLinesEngine();
 	}
 
-	private class WaveLinesEngine
-			extends CanvasWallpaperEngine
-			//implements SharedPreferences.OnSharedPreferenceChangeListener
-	{
+	private class WaveLinesEngine extends CanvasWallpaperEngine {
 		private final WaveLinesRenderer renderer = new WaveLinesRenderer();
 
 		public WaveLinesEngine() {
 			super();
 
-			PreferenceManager.setDefaultValues(
-					WaveLinesWallpaperService.this,
-					R.xml.preferences,
-					false);
-
-			/*SharedPreferences preferences =
-				WaveLinesWallpaperService.this.getSharedPreferences(
-					//SettingsActivity.SHARED_PREFERENCES_NAME,
-					"de.markusfisch.android.wavelines",
-					0 );
-
-			preferences.registerOnSharedPreferenceChangeListener(
-				this );
-
-			onSharedPreferenceChanged( preferences, null );
-		}
-
-		@Override
-		public void onSharedPreferenceChanged(
-			SharedPreferences preferences,
-			String key )
-		{
-			delay = Integer.parseInt(
-				preferences.getString( "delay", "100" ) );
-
-			Theme theme = null;
-			File file = new File(
-				getApplicationContext().getDir(),
-				preferences.getString( "theme" ) );
-
-			if( file.exists() )
-				theme = Theme.restore( file );
-
-			renderer.reset( theme != null ?
-				theme :
-				new Theme() );*/
-
-			delay = 100;
-			renderer.init(new Theme());
+			WaveLinesApp.preferences.getPreferences().registerOnSharedPreferenceChangeListener(
+					new SharedPreferences.OnSharedPreferenceChangeListener() {
+				@Override
+				public void onSharedPreferenceChanged(
+						SharedPreferences preferences,
+						String key) {
+					update();
+				}
+			});
+			update();
 		}
 
 		@Override
@@ -77,14 +46,26 @@ public class WaveLinesWallpaperService extends CanvasWallpaperService {
 					width,
 					height);
 
-			renderer.setup(width, height);
+			renderer.setSize(width, height);
 		}
 
 		@Override
-		protected void drawFrame(Canvas canvas, long dt) {
+		protected void drawFrame(Canvas canvas, long delta) {
 			canvas.save();
-			renderer.draw(canvas, dt);
+			renderer.draw(canvas, delta);
 			canvas.restore();
+		}
+
+		private void update() {
+			delay = WaveLinesApp.preferences.getDelay();
+			Theme theme = WaveLinesApp.dataSource.getTheme(
+					WaveLinesApp.preferences.getTheme());
+
+			if (theme == null) {
+				return;
+			}
+
+			renderer.setTheme(theme);
 		}
 	}
 }

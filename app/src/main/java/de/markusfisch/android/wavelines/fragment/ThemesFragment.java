@@ -1,10 +1,9 @@
 package de.markusfisch.android.wavelines.fragment;
 
 import de.markusfisch.android.wavelines.adapter.ThemeAdapter;
-import de.markusfisch.android.wavelines.app.WaveLinesApplication;
+import de.markusfisch.android.wavelines.app.WaveLinesApp;
 import de.markusfisch.android.wavelines.R;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -33,7 +32,7 @@ public class ThemesFragment extends Fragment {
 		View view = inflater.inflate(
 				R.layout.fragment_themes,
 				container,
-				false );
+				false);
 
 		listView = (ListView) view.findViewById(R.id.themes);
 		listView.post(queryThemesRunnable);
@@ -58,7 +57,7 @@ public class ThemesFragment extends Fragment {
 	}
 
 	private void queryThemes() {
-		if (!WaveLinesApplication.dataSource.isOpen()) {
+		if (!WaveLinesApp.dataSource.isOpen()) {
 			listView.postDelayed(queryThemesRunnable, 100);
 			return;
 		}
@@ -66,7 +65,7 @@ public class ThemesFragment extends Fragment {
 		new AsyncTask<Void, Void, Cursor>() {
 			@Override
 			protected Cursor doInBackground(Void... nothings) {
-				return WaveLinesApplication.dataSource.queryThemes();
+				return WaveLinesApp.dataSource.queryThemes();
 			}
 
 			@Override
