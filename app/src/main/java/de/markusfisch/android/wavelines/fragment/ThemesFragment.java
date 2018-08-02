@@ -4,6 +4,7 @@ import de.markusfisch.android.wavelines.adapter.ThemeAdapter;
 import de.markusfisch.android.wavelines.app.WaveLinesApp;
 import de.markusfisch.android.wavelines.R;
 
+import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -56,6 +57,10 @@ public class ThemesFragment extends Fragment {
 		return view;
 	}
 
+	// this AsyncTask is running for a short and finite time only
+	// and it's perfectly okay to delay garbage collection of the
+	// parent instance until this task has ended
+	@SuppressLint("StaticFieldLeak")
 	private void queryThemes() {
 		if (!WaveLinesApp.dataSource.isOpen()) {
 			listView.postDelayed(queryThemesRunnable, 100);

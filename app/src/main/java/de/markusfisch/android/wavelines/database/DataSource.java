@@ -3,6 +3,7 @@ package de.markusfisch.android.wavelines.database;
 import de.markusfisch.android.wavelines.graphics.WaveLinesRenderer;
 import de.markusfisch.android.wavelines.R;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -32,9 +33,11 @@ public class DataSource {
 
 	private SQLiteDatabase db;
 
+	// the parent instance of this AsyncTask will never be
+	// garbage collected anyway
+	@SuppressLint("StaticFieldLeak")
 	public void openAsync(final Context context) {
 		final OpenHelper helper = new OpenHelper(context);
-
 		new AsyncTask<Void, Void, Boolean>() {
 			@Override
 			protected Boolean doInBackground(Void... nothings) {
