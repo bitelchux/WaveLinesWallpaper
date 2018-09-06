@@ -5,18 +5,14 @@
 	package="de.markusfisch.android.wavelines"
 	android:installLocation="auto">
 	<supports-screens
-		android:resizeable="true"
-		android:smallScreens="true"
-		android:normalScreens="true"
 		android:largeScreens="true"
-		android:xlargeScreens="true"
-		android:anyDensity="true"/>
+		android:xlargeScreens="true"/>
 	<uses-feature android:name="android.software.live_wallpaper"/>
 	<application
 		android:name=".app.WaveLinesApp"
 		android:allowBackup="true"
-		android:fullBackupContent="true"
 		android:supportsRtl="true"
+		android:resizeableActivity="true"
 		android:label="@string/title"
 		android:icon="@mipmap/ic_launcher"
 		android:theme="@style/AppTheme">
@@ -34,6 +30,10 @@
 		<activity
 			android:name=".activity.MainActivity"
 			android:label="@string/themes">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN"/>
+				<category android:name="android.intent.category.LAUNCHER"/>
+			</intent-filter>
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW"/>
 				<category android:name="android.intent.category.DEFAULT"/>
